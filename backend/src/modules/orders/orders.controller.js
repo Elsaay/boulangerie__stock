@@ -58,7 +58,7 @@ exports.getOrders = (req, res) => {
     const ordersMap = {};
 
     results.forEach(row => {
-      // 🧠 créer la commande si elle existe pas encore
+
       if (!ordersMap[row.order_id]) {
         ordersMap[row.order_id] = {
           id: row.order_id,
@@ -69,7 +69,6 @@ exports.getOrders = (req, res) => {
         };
       }
 
-      // 🧠 ajouter item seulement si y'en a un
       if (row.product_id) {
         ordersMap[row.order_id].items.push({
           product_id: row.product_id,
@@ -79,7 +78,6 @@ exports.getOrders = (req, res) => {
       }
     });
 
-    // 🔥 transformer en tableau propre
     const orders = Object.values(ordersMap);
 
     res.json(orders);
