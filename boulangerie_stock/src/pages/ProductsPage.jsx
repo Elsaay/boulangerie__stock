@@ -1,98 +1,65 @@
 import { useState, useEffect } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../api';
-import ProductList from '../components/products/ProductList';
-import ProductForm from '../components/products/ProductForm';
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+  const [newProduct, setNewProduct] = useState({ name: '', image: '', stock: 0 });
+  const [editing, setEditing] = useState(null);
 
-  // Charger les produits
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await getProducts();
-      setProducts(response.data);
-      setError(null);
-    } catch (err) {
-      setError('Erreur lors du chargement des produits');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const load = async () => {
+    const res = await getProducts();
+    setProducts(res.data);
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  // Créer ou modifier un produit
-  const handleSubmit = async (productData) => {
-    try {
-      if (editingProduct) {
-        await updateProduct(editingProduct.id, productData);
-      } else {
-        await createProduct(productData);
-      }
-      fetchProducts();
-      setShowForm(false);
-      setEditingProduct(null);
-    } catch (err) {
-      setError('Erreur lors de la sauvegarde');
-      console.error(err);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (editing) {
+      await updateProduct(editing.id, newProduct);
+    } else {
+      await createProduct(newProduct);
     }
+    setNewProduct({ name: '', image: '', stock: 0 });
+    setEditing(null);
+    load();
   };
 
-  // Supprimer un produit
   const handleDelete = async (id) => {
-    if (!window.confirm('Supprimer ce produit ?')) return;
-    try {
+    if (window.confirm('Supprimer ce produit ?')) {
       await deleteProduct(id);
-      fetchProducts();
-    } catch (err) {
-      setError('Erreur lors de la suppression');
-      console.error(err);
+      load();
     }
   };
 
-  // Ouvrir le formulaire en mode édition
-  const handleEdit = (product) => {
-    setEditingProduct(product);
-    setShowForm(true);
+  const startEdit = (p) => {
+    setEditing(p);
+    setNewProduct({ name: p.name, image: p.image, stock: p.stock });
   };
-
-  if (loading) return <div className="loading">Chargement...</div>;
 
   return (
-    <div className="products-page">
-      <header className="page-header">
-        <h2>Gestion des Produits</h2>
-        <button 
-          className="btn btn-primary"
-          onClick={() => { setShowForm(true); setEditingProduct(null); }}
-        >
-          + Nouveau produit
-        </button>
-      </header>
+    <div>
+      <h2>Produits</h2>
+      <form onSubmit={handleSubmit}>
+        <input placeholder="Nom" value={newProduct.name} 
+          onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}/>
+        <input placeholder="Image URL" value={newProduct.image}
+          onChange={e => setNewProduct({ ...newProduct, image: e.target.value })}/>
+        <input type="number" placeholder="Stock" value={newProduct.stock}
+          onChange={e => setNewProduct({ ...newProduct, stock: Number(e.target.value) })}/>
+        <button type="submit">{editing ? "Modifier" : "Ajouter"}</button>
+        {editing && <button type="button" onClick={() => setEditing(null)}>Annuler</button>}
+      </form>
 
-      {error && <div className="error-message">{error}</div>}
-
-      {showForm && (
-        <ProductForm
-          product={editingProduct}
-          onSubmit={handleSubmit}
-          onCancel={() => { setShowForm(false); setEditingProduct(null); }}
-        />
-      )}
-
-      <ProductList 
-        products={products} 
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <ul>
+        {products.map(p => (
+          <li key={p.id}>
+            <strong>{p.name}</strong> — {p.stock} en stock
+            <button onClick={() => startEdit(p)}>✏️</button>
+            <button onClick={() => handleDelete(p.id)}>🗑️</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

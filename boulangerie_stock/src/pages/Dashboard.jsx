@@ -4,7 +4,6 @@ import { getProducts, getOrders } from '../api';
 function Dashboard() {
   const [stats, setStats] = useState({
     totalProducts: 0,
-    lowStock: 0,
     outOfStock: 0,
     totalOrders: 0,
   });
@@ -20,7 +19,7 @@ function Dashboard() {
         const products = productsRes.data;
         setStats({
           totalProducts: products.length,
-          lowStock: products.filter(p => p.stock > 0 && p.stock < 10).length,
+          lowStock: products.filter(p => p.stock > 1 && p.stock < 10).length,
           outOfStock: products.filter(p => p.stock === 0).length,
           totalOrders: ordersRes.data.length,
         });
