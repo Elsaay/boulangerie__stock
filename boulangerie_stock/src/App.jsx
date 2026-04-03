@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import ProductsPage from './pages/ProductsPage';
 import OrdersPage from './pages/OrdersPage';
-import StockPage from './pages/StockPage';
+import DailyReportPage from './pages/DailyReportPage';
 import './styles/index.css';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
             <li><NavLink to="/">Tableau de bord</NavLink></li>
             <li><NavLink to="/products">Produits</NavLink></li>
             <li><NavLink to="/orders">Commandes</NavLink></li>
-            <li><NavLink to="/stock">Stock</NavLink></li>
+            <li><NavLink to="/daily-report">Bilan de la journée</NavLink></li>
           </ul>
         </nav>
         
@@ -24,7 +24,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/stock" element={<StockPage />} />
+            <Route path="/daily-report" element={<DailyReportPage />} />
           </Routes>
         </main>
       </div>

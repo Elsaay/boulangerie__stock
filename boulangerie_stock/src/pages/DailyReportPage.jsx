@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { getProducts, useStock } from '../api';
+import { getProducts, recordDailyReport } from '../api';
 
-function StockPage() {
+function DailyReportPage() {
   const [products, setProducts] = useState([]);
   const [items, setItems] = useState([]);
 
@@ -19,14 +19,14 @@ function StockPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await useStock(items);
-    alert('Stock mis à jour');
+    await recordDailyReport(items);
+    alert('Bilan de la journée enregistré');
     setItems([]);
   };
 
   return (
     <div>
-      <h2>📦 Utilisation du stock</h2>
+      <h2>📦 Bilan de la journée</h2>
       <form onSubmit={handleSubmit}>
         {items.map((it, i) => (
           <div key={i}>
@@ -60,4 +60,4 @@ function StockPage() {
   );
 }
 
-export default StockPage;
+export default DailyReportPage;

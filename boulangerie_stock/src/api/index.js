@@ -15,7 +15,7 @@ export const deleteProduct = (id) => api.delete(`/products/${id}`);
 export const getOrders = () => api.get('/orders');
 export const createOrder = (data) => api.post('/orders', data);
 
-// === STOCK ===
-export const useStock = (items) => api.post('/stock-usage', items);
+// === BILAN DE LA JOURNÉE ===
+export const recordDailyReport = (items) => api.post('/stock-usage', items);
 
 export default api;
